@@ -11,6 +11,23 @@ struct ContentView: View {
     
     @State var height: String = ""
     @State var weight: String = ""
+    @State var result: Double = 0
+    @State var showAlert = false
+    @State var invalidAlert = false
+    
+    func buttonAction() {
+        guard let weight = Double(weight),
+              weight > 0,
+              let height = Double(height),
+              height > 0
+        else {
+            invalidAlert = true
+            return
+        }
+        
+        result = weight / pow(height,2)
+        showAlert = true
+    }
     
     var body: some View {
         
@@ -63,6 +80,7 @@ struct ContentView: View {
             VStack(alignment: .center) {
                 
                 Button {
+                    buttonAction()
                     
                 } label: {
                     Text("Calculate")
@@ -84,6 +102,19 @@ struct ContentView: View {
                 .fill(Color.blue.opacity(0.3))
                 .rotationEffect(Angle(degrees: -180))
                 .frame(width: 400, height: 245)
+        }
+        
+        .alert("Your BMI is \(result)" , isPresented: $showAlert) {
+            Button("OK", role: .cancel) {
+                height = ""
+                weight = ""
+            }
+        }
+        .alert("invalid character" , isPresented: $invalidAlert) {
+            Button("OK", role: .cancel) {
+                height = ""
+                weight = ""
+            }
         }
     }
 }
