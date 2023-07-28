@@ -9,26 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State var height: String = ""
-    @State var weight: String = ""
-    @State var result: Double = 0
-    @State var showAlert = false
-    @State var invalidAlert = false
-    
-    func buttonAction() {
-        guard let weight = Double(weight),
-              weight > 0,
-              let height = Double(height),
-              height > 0
-        else {
-            invalidAlert = true
-            return
-        }
+    @StateObject var viewModel = ContentViewModel()
         
-        result = weight / pow(height,2)
-        showAlert = true
-    }
-    
     var body: some View {
         
         VStack {
@@ -50,7 +32,7 @@ struct ContentView: View {
                 
                 Text("Height")
                     .font(.system(size: 25, weight: .semibold, design: .default))
-                TextField(" altura", text: $height)
+                TextField(" altura", text: $viewModel.height)
                     .font(.system(size: 22, weight: .semibold, design: .default))
                     .border(Color.blue)
                     .cornerRadius(5)
@@ -62,7 +44,7 @@ struct ContentView: View {
                 Text("Weight")
                     .font(.system(size: 25, weight: .semibold, design: .default))
                     .padding(.top, 50)
-                TextField(" peso", text: $weight).keyboardType(.numberPad)
+                TextField(" peso", text: $viewModel.weight).keyboardType(.numberPad)
                     .font(.system(size: 22, weight: .semibold, design: .default))
                     .border(Color.blue)
                     .cornerRadius(5)
@@ -80,7 +62,7 @@ struct ContentView: View {
             VStack(alignment: .center) {
                 
                 Button {
-                    buttonAction()
+                    viewModel.buttonAction()
                     
                 } label: {
                     Text("Calculate")
@@ -104,16 +86,16 @@ struct ContentView: View {
                 .frame(width: 400, height: 245)
         }
         
-        .alert("Your BMI is \(result)" , isPresented: $showAlert) {
+        .alert("Your BMI is \(viewModel.result)" , isPresented: $viewModel.showAlert) {
             Button("OK", role: .cancel) {
-                height = ""
-                weight = ""
+                viewModel.height = ""
+                viewModel.weight = ""
             }
         }
-        .alert("invalid character" , isPresented: $invalidAlert) {
+        .alert("invalid character" , isPresented: $viewModel.invalidAlert) {
             Button("OK", role: .cancel) {
-                height = ""
-                weight = ""
+                viewModel.height = ""
+                viewModel.weight = ""
             }
         }
     }
